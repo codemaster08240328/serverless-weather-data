@@ -1,0 +1,4 @@
+cron:
+  handler: controller/cron.run
+  events:
+    - schedule: rate(10 minutes)

@@ -1,0 +1,7 @@
+currentTemperature:
+  handler: controller/currentTemp.handler
+  events:
+    - http:
+        path: /currenttempincovilha
+        method: GET
+        cors: true

@@ -1,0 +1,4 @@
+{
+  "api_key": "{OPEN WEATHER API KEY}",
+  "db_endpoint": "mongodb+srv://{DB_USER_NAME}:{DB_PASSWORD}@vopakcluster.hocik.mongodb.net/{DATABASE_NAME}"
+}

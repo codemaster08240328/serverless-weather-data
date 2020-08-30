@@ -1,7 +1,7 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import CurTempModel from '../model/currentTemp';
 
-export const handler: APIGatewayProxyHandler = async (event) => {
+const handler: APIGatewayProxyHandler = async (event) => {
   /**
    * Current Temperatur in Covilha city Endpoint
    * Method: GET
@@ -39,3 +39,5 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     };
   }
 };
+
+export { handler };

@@ -19,7 +19,9 @@ const handler: APIGatewayProxyHandler = async (event) => {
 
     const res = {
       city_name: docu?.name,
-      temperature: docu?.feels_temp ? docu?.feels_temp - 273.15 : null,
+      temperature: docu?.feels_temp
+        ? (docu?.feels_temp - 273.15).toFixed(2)
+        : null,
       time: docu?.time,
       temp_unit: 'celcius',
     };

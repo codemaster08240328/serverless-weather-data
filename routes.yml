@@ -1,7 +1,16 @@
 currentTemperature:
   handler: controller/currentTemp.handler
+  timeout: 30
   events:
     - http:
         path: /currenttempincovilha
+        method: GET
+        cors: true
+
+avgTemperature:
+  handler: controller/averageTemp.handler
+  events:
+    - http:
+        path: /avgtempinsfax
         method: GET
         cors: true

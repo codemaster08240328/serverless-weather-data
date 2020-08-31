@@ -22,8 +22,8 @@ const run = async (event: APIGatewayEvent) => {
       timezone: res.timezone,
       temp: res.main.temp,
       feels_temp: res.main.feels_like,
-      temp_min: res.temp_min,
-      temp_max: res.temp_max,
+      temp_min: res.temp_min || 0,
+      temp_max: res.temp_max || 0,
       id: res.id,
     };
 

@@ -22,6 +22,12 @@
         "apiGateway": true,
         "lambda": true
       },
+      "environment": {
+        "CUR_WEATHER_DATA_API": "http://api.openweathermap.org/data/2.5",
+        "HISTORY_WEATHER_DATA_API": "http://history.openweathermap.org/data/2.5/history",
+        "DB_ENDPOINT": "mongodb+srv://vopak_user:vopak_pass@vopakcluster.hocik.mongodb.net/CovilhaTemp",
+        "API_KEY": "31b2e01d256432fcbd689f85557aa27d"
+      },
       "versionFunctions": true,
       "compiledCloudFormationTemplate": {
         "AWSTemplateFormatVersion": "2010-09-09",
@@ -85,6 +91,18 @@
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
               "LogGroupName": "/aws/lambda/vopak-assignment-dev-currentTemperature"
+            }
+          },
+          "AvgTemperatureLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/vopak-assignment-dev-avgTemperature"
+            }
+          },
+          "CronLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/vopak-assignment-dev-cron"
             }
           },
           "IamRoleLambdaExecution": {
@@ -181,7 +199,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/vopak-assignment/dev/1598548388224-2020-08-27T17:13:08.224Z/currentTemperature.zip"
+                "S3Key": "serverless/vopak-assignment/dev/1598896440549-2020-08-31T17:54:00.549Z/currentTemperature.zip"
               },
               "FunctionName": "vopak-assignment-dev-currentTemperature",
               "Handler": "controller/currentTemp.handler",
@@ -193,23 +211,160 @@
                 ]
               },
               "Runtime": "nodejs12.x",
-              "Timeout": 6,
+              "Timeout": 30,
               "TracingConfig": {
                 "Mode": "Active"
+              },
+              "Environment": {
+                "Variables": {
+                  "CUR_WEATHER_DATA_API": "http://api.openweathermap.org/data/2.5",
+                  "HISTORY_WEATHER_DATA_API": "http://history.openweathermap.org/data/2.5/history",
+                  "DB_ENDPOINT": "mongodb+srv://vopak_user:vopak_pass@vopakcluster.hocik.mongodb.net/CovilhaTemp",
+                  "API_KEY": "31b2e01d256432fcbd689f85557aa27d"
+                }
               }
             },
             "DependsOn": [
               "CurrentTemperatureLogGroup"
             ]
           },
-          "CurrentTemperatureLambdaVersionTNlCIdOMtLjODJ0s9G0oLonqoU1qnqSDSwWlStBkD0": {
+          "CurrentTemperatureLambdaVersionZ5StDHXLjP9Dky6X9ue5e4cd730mWXpFLfYnB2xN8": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CurrentTemperatureLambdaFunction"
               },
-              "CodeSha256": "9fme9ANbobC1fbDzHxRFnrpCh+3jCR/IOZLnaDyXNCU="
+              "CodeSha256": "hWerF9EpE3bITLxuk2WDYd8THpkHO/VfmuJL+BjL0x0="
+            }
+          },
+          "AvgTemperatureLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/vopak-assignment/dev/1598896440549-2020-08-31T17:54:00.549Z/avgTemperature.zip"
+              },
+              "FunctionName": "vopak-assignment-dev-avgTemperature",
+              "Handler": "controller/averageTemp.handler",
+              "MemorySize": 1024,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "Runtime": "nodejs12.x",
+              "Timeout": 6,
+              "TracingConfig": {
+                "Mode": "Active"
+              },
+              "Environment": {
+                "Variables": {
+                  "CUR_WEATHER_DATA_API": "http://api.openweathermap.org/data/2.5",
+                  "HISTORY_WEATHER_DATA_API": "http://history.openweathermap.org/data/2.5/history",
+                  "DB_ENDPOINT": "mongodb+srv://vopak_user:vopak_pass@vopakcluster.hocik.mongodb.net/CovilhaTemp",
+                  "API_KEY": "31b2e01d256432fcbd689f85557aa27d"
+                }
+              }
+            },
+            "DependsOn": [
+              "AvgTemperatureLogGroup"
+            ]
+          },
+          "AvgTemperatureLambdaVersionLbG6mnhTfAReIGTVo6k05QTa1jtjZARV4iT11GHS3Xk": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "AvgTemperatureLambdaFunction"
+              },
+              "CodeSha256": "hWerF9EpE3bITLxuk2WDYd8THpkHO/VfmuJL+BjL0x0="
+            }
+          },
+          "CronLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/vopak-assignment/dev/1598896440549-2020-08-31T17:54:00.549Z/cron.zip"
+              },
+              "FunctionName": "vopak-assignment-dev-cron",
+              "Handler": "controller/cron.run",
+              "MemorySize": 1024,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "Runtime": "nodejs12.x",
+              "Timeout": 6,
+              "TracingConfig": {
+                "Mode": "Active"
+              },
+              "Environment": {
+                "Variables": {
+                  "CUR_WEATHER_DATA_API": "http://api.openweathermap.org/data/2.5",
+                  "HISTORY_WEATHER_DATA_API": "http://history.openweathermap.org/data/2.5/history",
+                  "DB_ENDPOINT": "mongodb+srv://vopak_user:vopak_pass@vopakcluster.hocik.mongodb.net/CovilhaTemp",
+                  "API_KEY": "31b2e01d256432fcbd689f85557aa27d"
+                }
+              }
+            },
+            "DependsOn": [
+              "CronLogGroup"
+            ]
+          },
+          "CronLambdaVersionSSil1pdsaicXUrWJyhWOQPoXIk7dty2Yk0KIMfUVde0": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "CronLambdaFunction"
+              },
+              "CodeSha256": "hWerF9EpE3bITLxuk2WDYd8THpkHO/VfmuJL+BjL0x0="
+            }
+          },
+          "CronEventsRuleSchedule1": {
+            "Type": "AWS::Events::Rule",
+            "Properties": {
+              "ScheduleExpression": "rate(10 minutes)",
+              "State": "ENABLED",
+              "Targets": [
+                {
+                  "Arn": {
+                    "Fn::GetAtt": [
+                      "CronLambdaFunction",
+                      "Arn"
+                    ]
+                  },
+                  "Id": "cronSchedule"
+                }
+              ]
+            }
+          },
+          "CronLambdaPermissionEventsRuleSchedule1": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "CronLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "events.amazonaws.com",
+              "SourceArn": {
+                "Fn::GetAtt": [
+                  "CronEventsRuleSchedule1",
+                  "Arn"
+                ]
+              }
             }
           },
           "ApiGatewayRestApi": {
@@ -237,6 +392,21 @@
                 ]
               },
               "PathPart": "currenttempincovilha",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceAvgtempinsfax": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "avgtempinsfax",
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               }
@@ -287,6 +457,51 @@
               }
             }
           },
+          "ApiGatewayMethodAvgtempinsfaxOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".+\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceAvgtempinsfax"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
           "ApiGatewayMethodCurrenttempincovilhaGet": {
             "Type": "AWS::ApiGateway::Method",
             "Properties": {
@@ -330,7 +545,50 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1598548380734": {
+          "ApiGatewayMethodAvgtempinsfaxGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceAvgtempinsfax"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "AvgTemperatureLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            }
+          },
+          "ApiGatewayDeployment1598896411748": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -340,7 +598,9 @@
             },
             "DependsOn": [
               "ApiGatewayMethodCurrenttempincovilhaOptions",
-              "ApiGatewayMethodCurrenttempincovilhaGet"
+              "ApiGatewayMethodAvgtempinsfaxOptions",
+              "ApiGatewayMethodCurrenttempincovilhaGet",
+              "ApiGatewayMethodAvgtempinsfaxGet"
             ]
           },
           "CurrentTemperatureLambdaPermissionApiGateway": {
@@ -349,6 +609,43 @@
               "FunctionName": {
                 "Fn::GetAtt": [
                   "CurrentTemperatureLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "AvgTemperatureLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "AvgTemperatureLambdaFunction",
                   "Arn"
                 ]
               },
@@ -489,7 +786,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/vopak-assignment/dev/1598548388224-2020-08-27T17:13:08.224Z/custom-resources.zip"
+                "S3Key": "serverless/vopak-assignment/dev/1598896440549-2020-08-31T17:54:00.549Z/custom-resources.zip"
               },
               "FunctionName": "vopak-assignment-dev-custom-resource-apigw-cw-role",
               "Handler": "apiGatewayCloudWatchRole/handler.handler",
@@ -517,7 +814,19 @@
           "CurrentTemperatureLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CurrentTemperatureLambdaVersionTNlCIdOMtLjODJ0s9G0oLonqoU1qnqSDSwWlStBkD0"
+              "Ref": "CurrentTemperatureLambdaVersionZ5StDHXLjP9Dky6X9ue5e4cd730mWXpFLfYnB2xN8"
+            }
+          },
+          "AvgTemperatureLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "AvgTemperatureLambdaVersionLbG6mnhTfAReIGTVo6k05QTa1jtjZARV4iT11GHS3Xk"
+            }
+          },
+          "CronLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "CronLambdaVersionSSil1pdsaicXUrWJyhWOQPoXIk7dty2Yk0KIMfUVde0"
             }
           },
           "ServiceEndpoint": {
@@ -615,12 +924,15 @@
       "vpc": {}
     },
     "plugins": [
-      "serverless-plugin-typescript"
+      "serverless-plugin-typescript",
+      "serverless-offline",
+      "serverless-offline-scheduler"
     ],
     "pluginsData": {},
     "functions": {
       "currentTemperature": {
         "handler": "controller/currentTemp.handler",
+        "timeout": 30,
         "events": [
           {
             "http": {
@@ -658,10 +970,74 @@
           "artifact": "/Volumes/Work/Assignment/test/vopak/.serverless/currentTemperature.zip"
         },
         "memory": 1024,
+        "runtime": "nodejs12.x",
+        "vpc": {},
+        "versionLogicalId": "CurrentTemperatureLambdaVersionZ5StDHXLjP9Dky6X9ue5e4cd730mWXpFLfYnB2xN8"
+      },
+      "avgTemperature": {
+        "handler": "controller/averageTemp.handler",
+        "events": [
+          {
+            "http": {
+              "path": "avgtempinsfax",
+              "method": "get",
+              "cors": {
+                "origins": [
+                  "*"
+                ],
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "GET"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent"
+                ],
+                "allowCredentials": false
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "vopak-assignment-dev-avgTemperature",
+        "package": {
+          "exclude": [
+            "node_modules/serverless-plugin-typescript"
+          ],
+          "include": [],
+          "artifact": "/Volumes/Work/Assignment/test/vopak/.serverless/avgTemperature.zip"
+        },
+        "memory": 1024,
         "timeout": 6,
         "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "CurrentTemperatureLambdaVersionTNlCIdOMtLjODJ0s9G0oLonqoU1qnqSDSwWlStBkD0"
+        "versionLogicalId": "AvgTemperatureLambdaVersionLbG6mnhTfAReIGTVo6k05QTa1jtjZARV4iT11GHS3Xk"
+      },
+      "cron": {
+        "handler": "controller/cron.run",
+        "events": [
+          {
+            "schedule": "rate(10 minutes)"
+          }
+        ],
+        "name": "vopak-assignment-dev-cron",
+        "package": {
+          "exclude": [
+            "node_modules/serverless-plugin-typescript"
+          ],
+          "include": [],
+          "artifact": "/Volumes/Work/Assignment/test/vopak/.serverless/cron.zip"
+        },
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "nodejs12.x",
+        "vpc": {},
+        "versionLogicalId": "CronLambdaVersionSSil1pdsaicXUrWJyhWOQPoXIk7dty2Yk0KIMfUVde0"
       }
     },
     "configValidationMode": "warn",
@@ -682,7 +1058,7 @@
       },
       "package": {
         "individually": true,
-        "artifactDirectoryName": "serverless/vopak-assignment/dev/1598548388224-2020-08-27T17:13:08.224Z"
+        "artifactDirectoryName": "serverless/vopak-assignment/dev/1598896440549-2020-08-31T17:54:00.549Z"
       },
       "layers": {
         "$ref": "$[\"service\"][\"layers\"]"
@@ -693,7 +1069,7 @@
   },
   "package": {
     "individually": true,
-    "artifactDirectoryName": "serverless/vopak-assignment/dev/1598548388224-2020-08-27T17:13:08.224Z",
+    "artifactDirectoryName": "serverless/vopak-assignment/dev/1598896440549-2020-08-31T17:54:00.549Z",
     "artifact": ""
   }
 }

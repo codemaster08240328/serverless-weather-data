@@ -5,4 +5,6 @@ mongoose.connect(process.env.DB_ENDPOINT || '', {
   useUnifiedTopology: true,
 });
 
+console.log('mogodb connected successfully', mongoose);
+
 export default mongoose;

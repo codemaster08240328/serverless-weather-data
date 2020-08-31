@@ -16,7 +16,7 @@ Then, run following commands.
 
 ## How to invoking test script.
 
-First, you need to make **set_eng.sh** file based on **EXAMPLE.set_env.sh**
+First, you need to make **set_env.sh** file based on **EXAMPLE.set_env.sh**
 
 Run following commands.
 `npm install`
